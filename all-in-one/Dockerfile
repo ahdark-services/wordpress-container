@@ -50,4 +50,6 @@ RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
+WORKDIR /var/www/html
+
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
