@@ -12,6 +12,13 @@ ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/relea
 ARG PHP_EXTENSIONS="gd opcache zip pdo_mysql mysqli redis xdebug imagick exif mbstring zip"
 RUN install-php-extensions ${PHP_EXTENSIONS}
 
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "opcache.enable_cli=1" >> /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/opcache.ini
+RUN echo "memory_limit=2048M" >> /usr/local/etc/php/conf.d/performance.ini
+RUN echo "upload_max_filesize=100M" >> /usr/local/etc/php/conf.d/performance.ini
+RUN echo "post_max_size=100M" >> /usr/local/etc/php/conf.d/performance.ini
+
 COPY supervisor/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
 
 # Install nginx
@@ -23,7 +30,6 @@ RUN apt update && apt install -y gnupg2 ca-certificates lsb-release debian-archi
     | tee /etc/apt/sources.list.d/nginx.list \
     && apt update
 
-# Install Nginx
 RUN apt install -y nginx
 
 # Clean up APT cache to reduce image size
