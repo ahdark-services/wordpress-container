@@ -21,6 +21,8 @@ jobs:
       matrix:
         context:
           - all-in-one
+          - nginx
+          - php
 
     steps:
       - name: Checkout repository

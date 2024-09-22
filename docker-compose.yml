@@ -1,0 +1,45 @@
+name: WordPress
+
+networks:
+  wordpress:
+    driver: bridge
+
+volumes:
+  db_data: {}
+  wordpress_data: {}
+
+services:
+  db:
+    image: mariadb:lts
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - wordpress
+
+  nginx:
+    build:
+      context: nginx
+    depends_on:
+      - php
+    ports:
+      - "8080:80"
+    networks:
+      - wordpress
+    volumes:
+      - wordpress_data:/var/www/html/wp-content
+
+  php:
+    build:
+      context: php
+    depends_on:
+      - db
+    networks:
+      - wordpress
+    volumes:
+      - wordpress_data:/var/www/html/wp-content
