@@ -17,26 +17,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get latest git release
-        id: get-latest-release
-        run: |
-          LATEST_RELEASE=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "release=$LATEST_RELEASE" >> $GITHUB_OUTPUT
-
-      - name: Install dependencies
-        run: |
-          sudo apt install -y jq curl
-
       - name: Get latest WordPress version
         id: get-wordpress-version
         run: |
-          LATEST_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].current')
-          echo "Latest WordPress version is $LATEST_VERSION"
-          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          python -m pip install -r requirements.txt
+          python latest-version.py >> $GITHUB_OUTPUT
+          git push
 
       - name: Create release
         uses: softprops/action-gh-release@v2
-        if: steps.get-latest-release.outputs.release != steps.get-wordpress-version.outputs.version
+        if: steps.get-wordpress-version.outputs.is_update == 'true'
         with:
           tag_name: ${{ steps.get-wordpress-version.outputs.version }}
           name: ${{ steps.get-wordpress-version.outputs.version }}

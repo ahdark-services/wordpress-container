@@ -71,15 +71,20 @@ def compare_current_version(latest_version):
 
 def git_commit(version):
     # Add changes to the staging area
-    subprocess.run(["git", "add", ".current-version"], check=True)
+    subprocess.run(
+        ["git", "add", ".current-version"],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
 
     # Commit the changes with the provided commit message
     subprocess.run(
         ["git", "commit", "-m", f"Update WordPress to version {version}"],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
-
-    print("Commit successful!")
 
 
 if __name__ == "__main__":
@@ -88,4 +93,4 @@ if __name__ == "__main__":
     if is_update:
         git_commit(version)
 
-    print(is_update)
+    print(f"version={version}\nis_update={is_update}")
